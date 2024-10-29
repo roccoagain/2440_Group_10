@@ -11,7 +11,6 @@ from machine import Pin
 
 time.sleep(1) # Wait for USB to become ready
 
-
 pwm_rate = 2000
 ain1_ph = Pin(12, Pin.OUT) # Initialize GP14 as an OUTPUT
 ain2_en = PWM(13, freq = pwm_rate, duty_u16 = 0)
