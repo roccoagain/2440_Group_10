@@ -31,6 +31,8 @@ CMD_A = 0x15
 CMD_B = 0x16
 CMD_X = 0x17
 CMD_Y = 0x18
+CMD_START = 0x19
+CMD_SELECT = 0x1A
 
 # Button and joystick configuration
 BUTTON_A = 5

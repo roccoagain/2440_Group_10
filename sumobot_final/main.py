@@ -43,6 +43,8 @@ CMD_A = 0x15
 CMD_B = 0x16
 CMD_X = 0x17
 CMD_Y = 0x18
+CMD_START = 0x19
+CMD_SELECT = 0x1A
 
 # Initialize Ultrasonic Sensor
 trig = Pin(TRIG_PIN, Pin.OUT)
@@ -138,6 +140,9 @@ def ir_callback(data, addr):
     elif data == CMD_X:
         print("Spinning")
         spin()
+    elif data == CMD_START or data == CMD_SELECT:
+        print("Stopping motors")
+        motor_control(False, 0, False, 0)
     else:
         print(f"Unknown command: 0x{data:02X}")
         motor_control(False, 0, False, 0)
