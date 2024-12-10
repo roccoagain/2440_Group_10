@@ -79,6 +79,7 @@ def measure_distance():
         return None  # Timeout occurred, no echo received
 
     distance = (duration * 0.0343) / 2  # Calculate distance in cm
+    print(f"Distance: {distance} cm")
     return distance
 
 
@@ -87,14 +88,17 @@ def spin():
     motor_control(True, FULL_SPEED, False, FULL_SPEED)
     while True:
         distance = measure_distance()
-        if distance is not None and distance < 200:
+        if distance is not None and distance < 30:  # Stop spinning if obstacle detected
             motor_control(False, 0, False, 0)
             break
 
 
 def set_servo_angle(angle):
     """Set servo to the specified angle (0-270 degrees)."""
-    duty = int(2048 + (angle / 270) * 2048)
+    min_duty = 2048
+    max_duty = 8192
+
+    duty = int(min_duty + (angle / 270) * (max_duty - min_duty))
     servo_pwm.duty_u16(duty)
 
 
@@ -121,13 +125,13 @@ def ir_callback(data, addr):
         motor_control(False, 0, False, 0)
     elif data == CMD_LEFT:
         print("Turning left")
-        motor_control(False, HALF_SPEED, True, FULL_SPEED)
+        motor_control(False, FULL_SPEED, True, FULL_SPEED)
     elif data == CMD_RIGHT:
         print("Turning right")
-        motor_control(True, FULL_SPEED, False, HALF_SPEED)
+        motor_control(True, FULL_SPEED, False, FULL_SPEED)
     elif data == CMD_A:
         print("Lifting servo")
-        set_servo_angle(270)
+        set_servo_angle(80)
     elif data == CMD_B:
         print("Lowering servo")
         set_servo_angle(0)
@@ -147,6 +151,7 @@ def read_rf_data():
     return rf_data
 
 
+# main loop handles RF commands
 def main():
     print("Starting main loop...")
     while True:
@@ -170,6 +175,20 @@ def main():
             print("Received, 0x01, Turning right")
             motor_control(True, FULL_SPEED, False, HALF_SPEED)
         time.sleep(0.1)
+
+    # # test ultrasonic
+    # while True:
+    #     #measure distance
+    #     distance = measure_distance()
+    #     print(distance, "cm")
+    #     time.sleep(0.5)
+
+    # test servo
+    # while True:
+    #     for angle in [0, 80]:
+    #         print(f"Setting angle to {angle}")
+    #         set_servo_angle(angle)
+    #         time.sleep(1)
 
 
 if __name__ == "__main__":
