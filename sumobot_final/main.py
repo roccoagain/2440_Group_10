@@ -5,9 +5,9 @@ from ir_rx.nec import NEC_8
 
 # Constants
 # full motor speed is 50000
-FULL_SPEED = 30000
-HALF_SPEED = 15000
+FULL_SPEED = 15000
 PWM_RATE = 2000
+boost = False
 
 # Ultrasonic Sensor Pins
 TRIG_PIN = 10
@@ -112,6 +112,18 @@ def motor_control(ain1, ain2_duty, bin1, bin2_duty):
     bin2_en.duty_u16(bin2_duty)
 
 
+def boost_toggle():
+    global boost, FULL_SPEED
+    if not boost:
+        print("BOOST ON")
+        FULL_SPEED = 50000
+        boost = True
+    else:
+        print("BOOST OFF")
+        FULL_SPEED = 15000
+        boost = False
+
+
 def ir_callback(data, addr):
     """Handle IR commands."""
     print(f"Received NEC command! Data: 0x{data:02X}, Addr: 0x{addr:02X}")
@@ -133,10 +145,13 @@ def ir_callback(data, addr):
         motor_control(True, FULL_SPEED, False, FULL_SPEED)
     elif data == CMD_A:
         print("Lifting servo")
-        set_servo_angle(80)
+        set_servo_angle(90)
+    elif data == CMD_Y:
+        print("BOOST TOGGLE")
+        boost_toggle()
     elif data == CMD_B:
         print("Lowering servo")
-        set_servo_angle(0)
+        set_servo_angle(10)
     elif data == CMD_X:
         print("Spinning")
         spin()
@@ -175,10 +190,10 @@ def main():
             motor_control(False, 0, False, 0)
         # elif rf_data == 0x02:
         #     print("Turning left")
-        #     motor_control(False, HALF_SPEED, True, FULL_SPEED)
+        #     motor_control(False, FULL_SPEED, True, FULL_SPEED)
         elif rf_data == 0x01:
             print("Received, 0x01, Turning right")
-            motor_control(True, FULL_SPEED, False, HALF_SPEED)
+            motor_control(True, FULL_SPEED, False, FULL_SPEED)
         time.sleep(0.1)
 
     # # test ultrasonic

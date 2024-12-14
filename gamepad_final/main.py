@@ -105,6 +105,8 @@ def handle_button_press(buttons):
         send_command(CMD_B)
     elif buttons & (1 << BUTTON_X):
         send_command(CMD_X)
+    elif buttons & (1 << BUTTON_Y):
+        send_command(CMD_Y)
 
 
 def send_command(command):
